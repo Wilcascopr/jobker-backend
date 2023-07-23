@@ -1,33 +1,43 @@
-import { Model, Optional, DataTypes } from 'sequelize';
+import { Model, DataTypes,
+    InferAttributes,
+    InferCreationAttributes,
+    CreationOptional
+} from 'sequelize';
+import Role from './Role';
 
-type PermissionAttributes = {
-    id: number,
-    name: string,
-    machineName: string,
-};
-
-type PermissionCreationAttributes = Optional<PermissionAttributes, 'id'>;
-
-class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> {
-    declare id: number;
+class Permission extends Model<InferAttributes<Permission>, InferCreationAttributes<Permission>> {
+    declare id: CreationOptional<number>;
     declare name: string;
     declare machineName: string;
+
+    public static initModel = (sequelize: any) => {
+        this.init({
+            id: {
+                type: DataTypes.INTEGER.UNSIGNED,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            name: {
+                type: new DataTypes.STRING(255),
+                allowNull: false,
+            },
+            machineName: {
+                type: new DataTypes.STRING(255),
+                allowNull: false,
+            },
+        }, {
+            sequelize,
+            tableName: "permissions",
+        })
+    }
+
+    public static associate = () => {
+        this.belongsToMany(Role, {
+            through: "role_permissions",
+        });
+    }
+    
 }
 
-const typesDefinition = {
-    id: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    name: {
-        type: new DataTypes.STRING(255),
-        allowNull: false,
-    },
-    machineName: {
-        type: new DataTypes.STRING(255),
-        allowNull: false,
-    },
-};
 
-export default { model: Permission, typesDefinition };
+export default Permission;

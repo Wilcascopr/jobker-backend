@@ -13,21 +13,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const connection_1 = __importDefault(require("./database/connection"));
+const sequelize_1 = __importDefault(require("./database/sequelize"));
 const migrations_1 = __importDefault(require("./database/migrations"));
 const index_1 = __importDefault(require("./routes/index"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const DatabaseSeeder_1 = __importDefault(require("./database/seeders/DatabaseSeeder"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use(index_1.default);
+const startDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield sequelize_1.default.authenticate();
+        yield (0, migrations_1.default)(sequelize_1.default);
+        yield (0, DatabaseSeeder_1.default)();
+        console.log("Database connected");
+    }
+    catch (error) {
+        console.error(error);
+    }
+});
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const sequelize = yield (0, connection_1.default)();
-        if (!sequelize)
-            throw new Error("Unable to connect to the database");
-        yield (0, migrations_1.default)(sequelize);
-        app.listen(3000, () => {
+        yield startDB();
+        app.listen(process.env.PORT, () => {
             console.log("Server is running");
         });
     }

@@ -1,36 +1,25 @@
 import { Sequelize } from "sequelize";
-import UserModel from "../models/User";
-import PostModel from "../models/Post";
-import RoleModel from "../models/Role";
-import PermissionModel from "../models/Permission";
+import User from "../models/User";
+import Post from "../models/Post";
+import Role from "../models/Role";
+import Permission from "../models/Permission";
 
-const initModels = (sequelize: Sequelize) => {
-    UserModel.model.init(UserModel.typesDefinition, {
-        sequelize,
-        tableName: "users",
-    });
-    PostModel.model.init(PostModel.typesDefinition, {
-        sequelize,
-        tableName: "posts",
-    });
-    RoleModel.model.init(RoleModel.typesDefinition, {
-        sequelize,
-        tableName: "roles",
-    });
-    PermissionModel.model.init(PermissionModel.typesDefinition, {
-        sequelize,
-        tableName: "permissions",
-    });
-    PermissionModel.model.belongsToMany(RoleModel.model, {
-        through: "role_permissions",
-    });
-    UserModel.model.hasOne(PostModel.model);
+const initModels = async (sequelize: Sequelize) => {
+    User.initModel(sequelize);
+    Post.initModel(sequelize);
+    Role.initModel(sequelize);
+    Permission.initModel(sequelize);
+
+    User.associate();
+    Post.associate();
+    Role.associate();
+    Permission.associate();
 }
 
 const migrate = async (sequelize: Sequelize) => {
     try {
         initModels(sequelize);
-        await sequelize.sync({ force: false });
+        await sequelize.sync({ alter: true });
         console.log("Migrations complete");
     } catch (error) {
         console.error("Unable to migrate: ", error);

@@ -9,18 +9,8 @@ const dbData = {
     password: process.env.DB_PASSWORD || "postgres",
     host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT || 5432,
+    logging: false,
 }
 const sequelize = new Sequelize(dbData as Options);
 
-const connect = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log("Connection has been established successfully.");
-        return sequelize;
-    } catch (error) {
-        console.error("Unable to connect to the database: ", error);
-        return null;
-    }
-}
-
-export default connect;
+export default sequelize;

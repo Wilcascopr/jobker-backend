@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import Request from '../interfaces/Request'
-import PostModel from '../models/Post'
-const Post = PostModel.model;
+import Post from '../models/Post'
 
 const getAllPosts = async (req: Request, res: Response) => {
     try {

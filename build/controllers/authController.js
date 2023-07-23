@@ -25,7 +25,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signUp = exports.logOut = exports.logIn = void 0;
 const User_1 = __importDefault(require("../models/User"));
-const User = User_1.default.model;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const userValidators_1 = require("../validators/userValidators");
@@ -38,14 +37,13 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(400).json({ error: error.message });
         }
         const hashedPassword = yield bcrypt_1.default.hash(req.body.password, 16);
-        if (0 < (yield User.count({ where: { email: req.body.email } })))
+        if (0 < (yield User_1.default.count({ where: { email: req.body.email } })))
             return res.status(409).json({ error: 'Email already exists' });
-        const user = yield User.create({
+        const user = yield User_1.default.create({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
             password: hashedPassword,
-            roleId: req.body.roleId
         });
         const _a = user.toJSON(), { password } = _a, userResponse = __rest(_a, ["password"]);
         res.status(201).json({
@@ -63,7 +61,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const results = userValidators_1.loginValidator.validate(req.body);
         if (results.error)
             return res.status(400).json({ error: results.error.message });
-        const user = yield User.findOne({
+        const user = yield User_1.default.findOne({
             where: {
                 email: req.body.email
             }

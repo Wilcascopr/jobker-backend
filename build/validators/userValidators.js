@@ -27,7 +27,7 @@ const registerValidator = joi_1.default.object({
     password: joi_1.default.string().required(),
     confirmPassword: joi_1.default.string().required(),
     roleId: joi_1.default.number().required().external((value, helpers) => __awaiter(void 0, void 0, void 0, function* () {
-        const validRole = yield Role_1.default.model.count({ where: { id: value } });
+        const validRole = yield Role_1.default.count({ where: { id: value } });
         if (validRole < 1)
             return helpers.error('any.invalid', { custom: 'Invalid Role Id' });
         return value;

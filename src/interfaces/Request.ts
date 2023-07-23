@@ -1,6 +1,5 @@
 import { Request } from "express";
-import UserModel from "../models/User";
-const User = UserModel.model;
+import User from "../models/User";
 
 interface RequestWithUser extends Request {
     user?: typeof User.prototype;

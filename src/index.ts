@@ -1,20 +1,32 @@
 import express from "express";
-import connect from "./database/connection";
+import sequelize from "./database/sequelize";
 import migrate from "./database/migrations";
 import router from "./routes/index";
 import CookieParser from "cookie-parser";
+import seedDB from "./database/seeders/DatabaseSeeder";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(CookieParser());
 app.use(router);
 
+const startDB = async () => {
+    try {
+        await sequelize.authenticate();
+        await migrate(sequelize);
+        await seedDB();
+        console.log("Database connected");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const startServer = async () => {
     try {
-        const sequelize = await connect();
-        if (!sequelize) throw new Error("Unable to connect to the database");
-        await migrate(sequelize);
-        app.listen(3000, () => {
+        await startDB();
+        app.listen(process.env.PORT, () => {
             console.log("Server is running");
         });
     } catch (error) {

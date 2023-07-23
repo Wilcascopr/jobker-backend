@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import RoleModel from '../models/Role';
+import Role from '../models/Role';
 
 
 const loginValidator = Joi.object({
@@ -14,7 +14,7 @@ const registerValidator = Joi.object({
     password: Joi.string().required(),
     confirmPassword: Joi.string().required(),
     roleId: Joi.number().required().external(async (value, helpers) => {
-        const validRole = await RoleModel.model.count({ where: { id: value } });
+        const validRole = await Role.count({ where: { id: value } });
         if (validRole < 1)
             return helpers.error('any.invalid', { custom: 'Invalid Role Id' })
         return value;

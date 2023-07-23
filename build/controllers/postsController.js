@@ -14,10 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllPosts = void 0;
 const Post_1 = __importDefault(require("../models/Post"));
-const Post = Post_1.default.model;
 const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const posts = yield Post.findAll();
+        const posts = yield Post_1.default.findAll();
         res.status(200).json({ posts });
     }
     catch (error) {
